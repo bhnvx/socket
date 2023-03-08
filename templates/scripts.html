@@ -1,0 +1,28 @@
+<script>
+    async function runWebSocket() {
+        const ws = new WebSocket("ws://localhost:8000/ws");
+
+        await new Promise((resolve) => {
+            ws.onopen = () => {
+                console.log("WebSocket opened");
+                resolve();
+            };
+        });
+
+        $("#send_message").click(() => {
+            const inputText = $("#message_input").val();
+            console.log(inputText)
+            ws.send(inputText);
+        });
+
+        ws.onmessage = (event) => {
+            const outputText = event.data;
+            $("#text").text(outputText);
+        };
+
+        ws.onclose = (event) => {
+            ws.send("close");
+        };
+    }
+    runWebSocket();
+</script>
