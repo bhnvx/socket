@@ -38,12 +38,25 @@ async def main(request: Request):
     return templates.TemplateResponse("main.html", context)
 
 
+@app.get('/test', response_class=HTMLResponse)
+async def test(request: Request):
+    context = {
+        'request': request
+    }
+    return templates.TemplateResponse("test.html", context)
+
+
 @app.post('/', response_class=HTMLResponse)
 async def gpt_post(request: Request, message: str = Form(...)):
     async with WebSocket.connect("ws://localhost:8000/ws") as websocket:
         await websocket.send_text(message)
         output_text = await websocket.receive_text()
     return output_text
+
+
+@app.post('/test', response_class=HTMLResponse)
+async def test_post(request: Request, message: str = Form(...)):
+    return get_gpt(message)
 
 
 @app.websocket("/ws")
